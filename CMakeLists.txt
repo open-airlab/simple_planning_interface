@@ -23,7 +23,10 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(basic_interface src/basic_interface.cpp)
+add_executable(basic_interface 
+  src/basic_interface.cpp
+  src/basic_interface_node.cpp
+)
 target_link_libraries(basic_interface
    ${catkin_LIBRARIES}
 )

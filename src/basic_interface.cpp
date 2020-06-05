@@ -1,27 +1,39 @@
-#include <ros/ros.h>
+#include <simple_planning_interface/basic_interface.h>
 
-#include <interactive_markers/interactive_marker_server.h>
-#include <interactive_markers/menu_handler.h>
+BasicInterface::BasicInterface(ros::NodeHandle& nh_input) 
+:
+nh_(nh_input)
 
-#include <tf/transform_broadcaster.h>
-#include <tf/tf.h>
+{
 
-#include <math.h>
-#include <geometry_msgs/PoseArray.h>
+  // create ros pose publisher
+  pos_publisher_ = nh_.advertise<geometry_msgs::PoseArray>("/uav/desired_waypoints", 1);
 
-using namespace visualization_msgs;
+  // create a timer to update the published transforms
+  // ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.01), &BasicInterface::frameCallback, this);
+
+  server.reset( new interactive_markers::InteractiveMarkerServer("basic_interface","",false) );
+
+  // ros::Duration(0.1).sleep();
 
 
-// ROS publish variable
-ros::NodeHandle nh;
-ros::Publisher pos_publisher_;
+  tf::Vector3 position;
 
+  position = tf::Vector3( 0, 0, 0);
+  BasicInterface::makeQuadrocopterMarker( position );
 
-// %Tag(vars)%
-boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server;
+  position = tf::Vector3( 0, 5, 0);
+  BasicInterface::makeLoadButtonMarker( position );
+
+  position = tf::Vector3( 5, 5, 0);
+  BasicInterface::makeCommitButtonMarker( position );
+
+  server->applyChanges();
+
+}
 
 // %Tag(Box)%
-Marker makeBox( InteractiveMarker &msg, float r, float g, float b )
+Marker BasicInterface::makeBox( InteractiveMarker &msg, float r, float g, float b )
 {
   Marker marker;
 
@@ -37,7 +49,7 @@ Marker makeBox( InteractiveMarker &msg, float r, float g, float b )
   return marker;
 }
 
-Marker makeArrow( InteractiveMarker &msg )
+Marker BasicInterface::makeArrow( InteractiveMarker &msg )
 {
   Marker marker;
 
@@ -53,7 +65,7 @@ Marker makeArrow( InteractiveMarker &msg )
   return marker;
 }
 
-InteractiveMarkerControl& makeArrowControl( InteractiveMarker &msg )
+InteractiveMarkerControl& BasicInterface::makeArrowControl( InteractiveMarker &msg )
 {
   InteractiveMarkerControl control;
   control.always_visible = true;
@@ -65,7 +77,7 @@ InteractiveMarkerControl& makeArrowControl( InteractiveMarker &msg )
 // %EndTag(Box)%
 
 // %Tag(frameCallback)%
-void frameCallback(const ros::TimerEvent&)
+void BasicInterface::frameCallback(const ros::TimerEvent&)
 {
   static uint32_t counter = 0;
 
@@ -88,7 +100,7 @@ void frameCallback(const ros::TimerEvent&)
 // %EndTag(frameCallback)%
 
 // %Tag(processFeedback)%
-void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
+void BasicInterface::processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
 {
   std::ostringstream s;
   s << "Feedback from marker '" << feedback->marker_name << "' "
@@ -144,7 +156,7 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
 
 
 // Load button process
-void buttonLoadFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
+void BasicInterface::buttonLoadFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
 {
   if (feedback->event_type == visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK){
     std::cout <<  "load button right-clicked: Now load params from a yaml file" << std::endl;
@@ -153,13 +165,13 @@ void buttonLoadFeedback( const visualization_msgs::InteractiveMarkerFeedbackCons
     int num_points;
     geometry_msgs::PoseArray published_waypoints;
 
-    if (nh.getParam("/waypoints/data", waypoints) && nh.getParam("/waypoints/num_points", num_points)){
+    if (nh_.getParam("/waypoints/data", waypoints) && nh_.getParam("/waypoints/num_points", num_points)){
       if (waypoints.size() % num_points == 0){
         for (int i = 0; i < num_points; i ++){
           geometry_msgs::Pose pose;
-          pose.position.x = waypoints[i];
-          pose.position.y = waypoints[i+1];
-          pose.position.z = waypoints[i+2];
+          pose.position.x = waypoints[i*num_points];
+          pose.position.y = waypoints[i*num_points+1];
+          pose.position.z = waypoints[i*num_points+2];
           published_waypoints.poses.push_back(pose);
         }
       }
@@ -176,7 +188,7 @@ void buttonLoadFeedback( const visualization_msgs::InteractiveMarkerFeedbackCons
 }
 
 // Commit button process
-void buttonCommitFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
+void BasicInterface::buttonCommitFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
 {
   if (feedback->event_type == visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK){
     std::cout <<  "\033[1;33m commit button right-clicked: Now the robot will commit the trajectory\033[0m\n" << std::endl;
@@ -187,7 +199,7 @@ void buttonCommitFeedback( const visualization_msgs::InteractiveMarkerFeedbackCo
 ////////////////////////////////////////////////////////////////////////////////////
 
 // %Tag(Quadrocopter)%
-void makeQuadrocopterMarker( const tf::Vector3& position )
+void BasicInterface::makeQuadrocopterMarker( const tf::Vector3& position )
 {
   InteractiveMarker int_marker;
   int_marker.header.frame_id = "map";
@@ -210,12 +222,12 @@ void makeQuadrocopterMarker( const tf::Vector3& position )
   int_marker.controls.push_back(control);
 
   server->insert(int_marker);
-  server->setCallback(int_marker.name, &processFeedback);
+  server->setCallback(int_marker.name, boost::bind(&BasicInterface::processFeedback, this, _1));
 }
 // %EndTag(Quadrocopter)%
 
 // Load Button
-void makeLoadButtonMarker( const tf::Vector3& position )
+void BasicInterface::makeLoadButtonMarker( const tf::Vector3& position )
 {
   InteractiveMarker int_marker;
   int_marker.header.frame_id = "map";
@@ -236,11 +248,11 @@ void makeLoadButtonMarker( const tf::Vector3& position )
   int_marker.controls.push_back(control);
 
   server->insert(int_marker);
-  server->setCallback(int_marker.name, &buttonLoadFeedback);
+  server->setCallback(int_marker.name, boost::bind(&BasicInterface::buttonLoadFeedback, this, _1));
 }
 
 // Commit button
-void makeCommitButtonMarker( const tf::Vector3& position )
+void BasicInterface::makeCommitButtonMarker( const tf::Vector3& position )
 {
   InteractiveMarker int_marker;
   int_marker.header.frame_id = "map";
@@ -261,40 +273,5 @@ void makeCommitButtonMarker( const tf::Vector3& position )
   int_marker.controls.push_back(control);
 
   server->insert(int_marker);
-  server->setCallback(int_marker.name, &buttonCommitFeedback);
+  server->setCallback(int_marker.name, boost::bind(&BasicInterface::buttonCommitFeedback, this, _1));
 }
-
-// %Tag(main)%
-int main(int argc, char** argv)
-{
-  ros::init(argc, argv, "planner_interface");
-  
-  // create ros pose publisher
-  pos_publisher_ = nh.advertise<geometry_msgs::PoseArray>("/uav/desired_waypoints", 1);
-
-  // create a timer to update the published transforms
-  ros::Timer frame_timer = nh.createTimer(ros::Duration(0.01), frameCallback);
-
-  server.reset( new interactive_markers::InteractiveMarkerServer("basic_interface","",false) );
-
-  ros::Duration(0.1).sleep();
-
-
-  tf::Vector3 position;
-
-  position = tf::Vector3( 0, 0, 0);
-  makeQuadrocopterMarker( position );
-
-  position = tf::Vector3( 0, 5, 0);
-  makeLoadButtonMarker( position );
-
-  position = tf::Vector3( 5, 5, 0);
-  makeCommitButtonMarker( position );
-
-  server->applyChanges();
-
-  ros::spin();
-
-  server.reset();
-}
-// %EndTag(main)%
