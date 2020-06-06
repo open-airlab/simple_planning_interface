@@ -7,7 +7,8 @@ nh_(nh_input)
 {
 
   // create ros pose publisher
-  pos_publisher_ = nh_.advertise<geometry_msgs::PoseArray>("/uav/desired_waypoints", 1);
+  pos_publisher_ = nh_.advertise<geometry_msgs::PoseArray>("/planner_interface/desired_waypoints", 1);
+  commit_publisher_ = nh_.advertise<std_msgs::Bool>("/planner_interface/commit", 1);
 
   // create a timer to update the published transforms
   // ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.01), &BasicInterface::frameCallback, this);
@@ -161,17 +162,21 @@ void BasicInterface::buttonLoadFeedback( const visualization_msgs::InteractiveMa
   if (feedback->event_type == visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK){
     std::cout <<  "load button right-clicked: Now load params from a yaml file" << std::endl;
 
+    std_msgs::Bool bool_msg;
+    bool_msg.data = false;
+    commit_publisher_.publish(bool_msg);
+
     std::vector<double> waypoints;
     int num_points;
     geometry_msgs::PoseArray published_waypoints;
 
     if (nh_.getParam("/waypoints/data", waypoints) && nh_.getParam("/waypoints/num_points", num_points)){
-      if (waypoints.size() % num_points == 0){
+      if (waypoints.size() % 3 == 0){
         for (int i = 0; i < num_points; i ++){
           geometry_msgs::Pose pose;
-          pose.position.x = waypoints[i*num_points];
-          pose.position.y = waypoints[i*num_points+1];
-          pose.position.z = waypoints[i*num_points+2];
+          pose.position.x = waypoints[i*3];
+          pose.position.y = waypoints[i*3+1];
+          pose.position.z = waypoints[i*3+2];
           published_waypoints.poses.push_back(pose);
         }
       }
@@ -182,7 +187,7 @@ void BasicInterface::buttonLoadFeedback( const visualization_msgs::InteractiveMa
       std::cout << "params loaded and published" << std::endl;
     }
     else
-      ROS_ERROR("Failed to get param '/projection_matrix/data'");
+      ROS_ERROR("Failed to get param file");
   }
   server->applyChanges();
 }
@@ -192,6 +197,10 @@ void BasicInterface::buttonCommitFeedback( const visualization_msgs::Interactive
 {
   if (feedback->event_type == visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK){
     std::cout <<  "\033[1;33m commit button right-clicked: Now the robot will commit the trajectory\033[0m\n" << std::endl;
+    
+    std_msgs::Bool bool_msg;
+    bool_msg.data = true;
+    commit_publisher_.publish(bool_msg);
   }
   server->applyChanges();
 }

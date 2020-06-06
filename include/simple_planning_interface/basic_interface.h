@@ -10,6 +10,7 @@
 
 #include <math.h>
 #include <geometry_msgs/PoseArray.h>
+#include <std_msgs/Bool.h>
 
 using namespace visualization_msgs;
 
@@ -39,6 +40,7 @@ class BasicInterface
   // ROS publish variable
   ros::NodeHandle nh_;
   ros::Publisher pos_publisher_;
+  ros::Publisher commit_publisher_;
   
 };  // End of Class
 
