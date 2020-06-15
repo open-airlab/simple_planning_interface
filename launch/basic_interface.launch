@@ -2,6 +2,7 @@
 	<rosparam command="load" file="$(find simple_planning_interface)/cfg/waypoints.yaml" />
 
 	<node name="basic_interface_node" pkg="simple_planning_interface" type="basic_interface" output="screen" />
+	<node type="rviz" name="rviz" pkg="rviz" args="-d $(find simple_planning_interface)/rviz/rviz_interface.rviz" />
 
 	<!-- <node name="test_point_backprojection" pkg="drone_racing_point_backprojection" type="test_point_backprojection" output="screen" /> -->
 	<!-- <rosparam param="gate1">[5, 0, 0, 80]</rosparam> [x, y, z, yaw] -->

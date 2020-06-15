@@ -11,6 +11,7 @@
 #include <math.h>
 #include <geometry_msgs/PoseArray.h>
 #include <std_msgs/Bool.h>
+#include <Eigen/Dense>
 
 using namespace visualization_msgs;
 
@@ -31,9 +32,12 @@ class BasicInterface
   void frameCallback(const ros::TimerEvent&);
   void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
   void buttonLoadFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
+  void buttonVisualizeFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
   void buttonCommitFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
+
   void makeQuadrocopterMarker( const tf::Vector3& position );
   void makeLoadButtonMarker( const tf::Vector3& position );
+  void makeVisualizeButtonMarker( const tf::Vector3& position );
   void makeCommitButtonMarker( const tf::Vector3& position );
   
  private:

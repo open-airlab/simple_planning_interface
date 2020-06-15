@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 3.0.2)
 project(simple_planning_interface)
 
 find_package(catkin REQUIRED COMPONENTS interactive_markers roscpp visualization_msgs tf)
+find_package(Eigen3 QUIET)
+if(NOT EIGEN3_FOUND)
+  # ROS == Indigo.
+  find_package(cmake_modules REQUIRED)
+  find_package(Eigen REQUIRED)
+  set(EIGEN3_INCLUDE_DIRS ${EIGEN_INCLUDE_DIRS})
+else()
+  # ROS > Indigo.
+  set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
+endif()
+
 
 ###################################
 ## catkin specific configuration ##
@@ -13,6 +24,7 @@ find_package(catkin REQUIRED COMPONENTS interactive_markers roscpp visualization
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   CATKIN_DEPENDS interactive_markers roscpp visualization_msgs tf
+  DEPENDS Eigen3
 )
 
 ###########
@@ -21,6 +33,7 @@ catkin_package(
 
 include_directories(include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
 )
 
 add_executable(basic_interface 
