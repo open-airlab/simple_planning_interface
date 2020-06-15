@@ -103,62 +103,6 @@ void BasicInterface::frameCallback(const ros::TimerEvent&)
 }
 // %EndTag(frameCallback)%
 
-// %Tag(processFeedback)%
-void BasicInterface::processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
-{
-  std::ostringstream s;
-  s << "Feedback from marker '" << feedback->marker_name << "' "
-      << " / control '" << feedback->control_name << "'";
-
-  std::ostringstream mouse_point_ss;
-  if( feedback->mouse_point_valid )
-  {
-    mouse_point_ss << " at " << feedback->mouse_point.x
-                   << ", " << feedback->mouse_point.y
-                   << ", " << feedback->mouse_point.z
-                   << " in frame " << feedback->header.frame_id;
-  }
-
-  switch ( feedback->event_type )
-  {
-    case visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK:
-      ROS_INFO_STREAM( s.str() << ": button click" << mouse_point_ss.str() << "." );
-      break;
-
-    case visualization_msgs::InteractiveMarkerFeedback::MENU_SELECT:
-      ROS_INFO_STREAM( s.str() << ": menu item " << feedback->menu_entry_id << " clicked" << mouse_point_ss.str() << "." );
-      break;
-
-    case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE:
-      ROS_INFO_STREAM( s.str() << ": pose changed"
-          << "\nposition = "
-          << feedback->pose.position.x
-          << ", " << feedback->pose.position.y
-          << ", " << feedback->pose.position.z
-          << "\norientation = "
-          << feedback->pose.orientation.w
-          << ", " << feedback->pose.orientation.x
-          << ", " << feedback->pose.orientation.y
-          << ", " << feedback->pose.orientation.z
-          << "\nframe: " << feedback->header.frame_id
-          << " time: " << feedback->header.stamp.sec << "sec, "
-          << feedback->header.stamp.nsec << " nsec" );
-      break;
-
-    case visualization_msgs::InteractiveMarkerFeedback::MOUSE_DOWN:
-      ROS_INFO_STREAM( s.str() << ": mouse down" << mouse_point_ss.str() << "." );
-      break;
-
-    case visualization_msgs::InteractiveMarkerFeedback::MOUSE_UP:
-      ROS_INFO_STREAM( s.str() << ": mouse up" << mouse_point_ss.str() << "." );
-      break;
-  }
-
-  server->applyChanges();
-}
-// %EndTag(processFeedback)%
-
-
 // Load button process
 void BasicInterface::buttonLoadFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
 {
@@ -228,6 +172,55 @@ void BasicInterface::buttonCommitFeedback( const visualization_msgs::Interactive
   server->applyChanges();
 }
 
+// Drone Target moving feedback process
+void BasicInterface::moveTargetQuadcopterFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
+{
+  if (feedback->event_type == visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE){
+
+    if (feedback->pose.position.x <= MAX_X && feedback->pose.position.x >= -MAX_X 
+          && feedback->pose.position.y <= MAX_Y && feedback->pose.position.y >= -MAX_Y 
+          && feedback->pose.position.z <= MAX_Z && feedback->pose.position.z >= 0.3){
+      
+      Eigen::Quaterniond q;
+      q.x() = feedback->pose.orientation.x;
+      q.y() = feedback->pose.orientation.y;
+      q.z() = feedback->pose.orientation.z;
+      q.w() = feedback->pose.orientation.w;
+      auto euler = q.toRotationMatrix().eulerAngles(0, 1, 2);
+
+      std::ostringstream s;
+      ROS_INFO_STREAM( s.str() << ": Drone target moves. Press COMMIT button to for the drone to MOVE to:"
+      << "\nposition = "
+      << feedback->pose.position.x
+      << ", " << feedback->pose.position.y
+      << ", " << feedback->pose.position.z
+      << "\nyaw_angle = " << euler(2)
+      << "\nframe: " << feedback->header.frame_id);
+
+      geometry_msgs::PoseArray published_waypoints;
+      geometry_msgs::Pose pose_msgs;
+
+      pose_msgs.position.x = feedback->pose.position.x;
+      pose_msgs.position.y = feedback->pose.position.y;
+      pose_msgs.position.z = feedback->pose.position.z;
+
+      pose_msgs.orientation.x = feedback->pose.orientation.x;
+      pose_msgs.orientation.y = feedback->pose.orientation.y;
+      pose_msgs.orientation.z = feedback->pose.orientation.z;
+      pose_msgs.orientation.w = feedback->pose.orientation.w;
+
+      published_waypoints.poses.push_back(pose_msgs);
+
+      pos_publisher_.publish(published_waypoints);
+      std::cout << "params loaded and published" << std::endl;
+    }
+    else{
+      ROS_WARN("Drone cannot go out of the safety cage!");
+    }
+  }
+
+  server->applyChanges();
+}
 ////////////////////////////////////////////////////////////////////////////////////
 
 // %Tag(Quadrocopter)%
@@ -254,7 +247,7 @@ void BasicInterface::makeQuadrocopterMarker( const tf::Vector3& position )
   int_marker.controls.push_back(control);
 
   server->insert(int_marker);
-  server->setCallback(int_marker.name, boost::bind(&BasicInterface::processFeedback, this, _1));
+  server->setCallback(int_marker.name, boost::bind(&BasicInterface::moveTargetQuadcopterFeedback, this, _1));
 }
 // %EndTag(Quadrocopter)%
 

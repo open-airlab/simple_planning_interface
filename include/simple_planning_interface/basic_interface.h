@@ -13,6 +13,10 @@
 #include <std_msgs/Bool.h>
 #include <Eigen/Dense>
 
+#define MAX_X   5.5     //7
+#define MAX_Y   5.5     //7
+#define MAX_Z   3.0     //4
+
 using namespace visualization_msgs;
 
 class BasicInterface
@@ -30,10 +34,11 @@ class BasicInterface
   Marker makeArrow( InteractiveMarker &msg );
   InteractiveMarkerControl& makeArrowControl( InteractiveMarker &msg );
   void frameCallback(const ros::TimerEvent&);
-  void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
+
   void buttonLoadFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
   void buttonVisualizeFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
   void buttonCommitFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
+  void moveTargetQuadcopterFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
 
   void makeQuadrocopterMarker( const tf::Vector3& position );
   void makeLoadButtonMarker( const tf::Vector3& position );
