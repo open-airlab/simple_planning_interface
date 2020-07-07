@@ -20,7 +20,7 @@ nh_(nh_input)
 
   tf::Vector3 position;
 
-  position = tf::Vector3( 0, 0, 0);
+  position = tf::Vector3( 0, 0, 2.0);
   BasicInterface::makeQuadrocopterMarker( position );
 
   position = tf::Vector3( 0, 5, 0);
@@ -197,8 +197,8 @@ void BasicInterface::moveTargetQuadcopterFeedback( const visualization_msgs::Int
       << "\nyaw_angle = " << euler(2)
       << "\nframe: " << feedback->header.frame_id);
 
-      geometry_msgs::PoseArray published_waypoints;
       geometry_msgs::Pose pose_msgs;
+      geometry_msgs::PoseArray moving_target_waypoints;
 
       pose_msgs.position.x = feedback->pose.position.x;
       pose_msgs.position.y = feedback->pose.position.y;
@@ -209,10 +209,10 @@ void BasicInterface::moveTargetQuadcopterFeedback( const visualization_msgs::Int
       pose_msgs.orientation.z = feedback->pose.orientation.z;
       pose_msgs.orientation.w = feedback->pose.orientation.w;
 
-      published_waypoints.poses.push_back(pose_msgs);
-
-      pos_publisher_.publish(published_waypoints);
+      moving_target_waypoints.poses.push_back(pose_msgs);
+      pos_publisher_.publish(moving_target_waypoints);
       std::cout << "params loaded and published" << std::endl;
+
     }
     else{
       ROS_WARN("Drone cannot go out of the safety cage!");
@@ -241,6 +241,7 @@ void BasicInterface::makeQuadrocopterMarker( const tf::Vector3& position )
   tf::Quaternion orien(0.0, 1.0, 0.0, 1.0);
   orien.normalize();
   tf::quaternionTFToMsg(orien, control.orientation);
+
   control.interaction_mode = InteractiveMarkerControl::MOVE_ROTATE;
   int_marker.controls.push_back(control);
   control.interaction_mode = InteractiveMarkerControl::MOVE_AXIS;
