@@ -41,7 +41,16 @@ add_executable(basic_interface
   src/basic_interface_node.cpp
 )
 target_link_libraries(basic_interface
-   ${catkin_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+
+
+add_executable(racer_interface 
+  src/racer_interface.cpp
+  src/racer_interface_node.cpp
+)
+target_link_libraries(racer_interface
+  ${catkin_LIBRARIES}
 )
 
 #############
@@ -50,7 +59,8 @@ target_link_libraries(basic_interface
 
 ## Mark executables and/or libraries for installation
 install(TARGETS
-   basic_interface
+  basic_interface
+  racer_interface
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
