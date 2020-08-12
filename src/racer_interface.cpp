@@ -81,6 +81,7 @@ void RacerInterface::buttonStopFeedback( const visualization_msgs::InteractiveMa
     std_msgs::Bool bool_msg;
     bool_msg.data = false;
     run_publisher_.publish(bool_msg);
+    init_publisher_.publish(bool_msg);
   }
   server->applyChanges();
 }
