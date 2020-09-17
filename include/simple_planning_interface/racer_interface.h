@@ -45,6 +45,7 @@ class RacerInterface
   ros::NodeHandle nh_;
   ros::Publisher init_publisher_;
   ros::Publisher run_publisher_;
+  ros::Publisher emergency_publisher_;
   
 };  // End of Class
 

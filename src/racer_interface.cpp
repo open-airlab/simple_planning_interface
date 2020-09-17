@@ -9,6 +9,7 @@ nh_(nh_input)
   // command publisher
   init_publisher_ = nh_.advertise<std_msgs::Bool>("/racer_interface/init_status", 1);
   run_publisher_ = nh_.advertise<std_msgs::Bool>("/racer_interface/run_status", 1);
+  emergency_publisher_ = nh_.advertise<std_msgs::Bool>("/racer_interface/emergency_status", 1);
 
   // create a timer to update the published transforms
   // ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.01), &RacerInterface::frameCallback, this);
@@ -22,7 +23,7 @@ nh_(nh_input)
 
   RacerInterface::makeStartButtonMarker( tf::Vector3( 5.5, 5.5, 0) );
 
-  RacerInterface::makeStopButtonMarker( tf::Vector3( 5.5, 0, 0) );
+  RacerInterface::makeStopButtonMarker( tf::Vector3( 5.5, -5.5, 0) );
 
   server->applyChanges();
 
@@ -82,6 +83,9 @@ void RacerInterface::buttonStopFeedback( const visualization_msgs::InteractiveMa
     bool_msg.data = false;
     run_publisher_.publish(bool_msg);
     init_publisher_.publish(bool_msg);
+    
+    bool_msg.data = true;
+    emergency_publisher_.publish(bool_msg);
   }
   server->applyChanges();
 }

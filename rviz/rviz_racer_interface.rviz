@@ -77,13 +77,39 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        base_link:
+          Value: true
+        base_link_frd:
+          Value: true
+        map:
+          Value: true
+        map_ned:
+          Value: true
+        odom:
+          Value: true
+        odom_ned:
+          Value: true
+        vicon/gate_1/gate_1:
+          Value: true
+        vicon/gate_2/gate_2:
+          Value: true
+        vicon/gate_3/gate_3:
+          Value: true
+        vicon/gate_4/gate_4:
+          Value: true
+        vicon/ida_racer/ida_racer:
+          Value: true
+        world:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        {}
+        map:
+          map_ned:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -147,7 +173,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /global_planner/waypoint_makers
+      Marker Topic: /racer_planner/waypoint_makers
       Name: Marker
       Namespaces:
         {}
@@ -155,7 +181,15 @@ Visualization Manager:
       Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /global_planner/ground_truth/gate_pose/markers
+      Marker Topic: /mapper/ground_truth/gate_pose/markers
+      Name: Marker
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /mapper/gate_pose/markers
       Name: Marker
       Namespaces:
         {}
@@ -189,25 +223,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 19.518085479736328
+      Distance: 19.825637817382812
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.0508172512054443
-        Y: 1.7337357997894287
-        Z: 2.2908411026000977
+        X: 0.7752825617790222
+        Y: 1.734115481376648
+        Z: 3.423715591430664
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.769797146320343
+      Pitch: 0.7047969102859497
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.031143929809331894
+      Yaw: 1.591139316558838
     Saved: ~
 Window Geometry:
   Displays:
