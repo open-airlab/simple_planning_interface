@@ -13,9 +13,9 @@
 #include <std_msgs/Bool.h>
 #include <Eigen/Dense>
 
-#define MAX_X   5.5     //7
-#define MAX_Y   5.5     //7
-#define MAX_Z   3.0     //4
+#define MAX_X   100.0 //5.5   
+#define MAX_Y   100.0 //5.5  
+#define MAX_Z   3.0 //3.0  
 
 using namespace visualization_msgs;
 
