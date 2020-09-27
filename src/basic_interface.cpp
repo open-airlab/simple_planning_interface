@@ -80,28 +80,28 @@ InteractiveMarkerControl& BasicInterface::makeArrowControl( InteractiveMarker &m
 }
 // %EndTag(Box)%
 
-// %Tag(frameCallback)%
-void BasicInterface::frameCallback(const ros::TimerEvent&)
-{
-  static uint32_t counter = 0;
+// // %Tag(frameCallback)%
+// void BasicInterface::frameCallback(const ros::TimerEvent&)
+// {
+//   static uint32_t counter = 0;
 
-  static tf::TransformBroadcaster br;
+//   static tf::TransformBroadcaster br;
 
-  tf::Transform t;
+//   tf::Transform t;
 
-  ros::Time time = ros::Time::now();
+//   ros::Time time = ros::Time::now();
 
-  t.setOrigin(tf::Vector3(0.0, 0.0, sin(float(counter)/140.0) * 2.0));
-  t.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
-  br.sendTransform(tf::StampedTransform(t, time, "map", "moving_frame"));
+//   t.setOrigin(tf::Vector3(0.0, 0.0, sin(float(counter)/140.0) * 2.0));
+//   t.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
+//   br.sendTransform(tf::StampedTransform(t, time, "map", "moving_frame"));
 
-  t.setOrigin(tf::Vector3(0.0, 0.0, 0.0));
-  t.setRotation(tf::createQuaternionFromRPY(0.0, float(counter)/140.0, 0.0));
-  br.sendTransform(tf::StampedTransform(t, time, "map", "rotating_frame"));
+//   t.setOrigin(tf::Vector3(0.0, 0.0, 0.0));
+//   t.setRotation(tf::createQuaternionFromRPY(0.0, float(counter)/140.0, 0.0));
+//   br.sendTransform(tf::StampedTransform(t, time, "map", "rotating_frame"));
 
-  counter++;
-}
-// %EndTag(frameCallback)%
+//   counter++;
+// }
+// // %EndTag(frameCallback)%
 
 // Load button process
 void BasicInterface::buttonLoadFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
@@ -307,6 +307,7 @@ void BasicInterface::makeCommitButtonMarker( const tf::Vector3& position )
 {
   InteractiveMarker int_marker;
   int_marker.header.frame_id = "map";
+  // int_marker.header.stamp = ros::Time::now;
   tf::pointTFToMsg(position, int_marker.pose.position);
   int_marker.scale = 1;
 
