@@ -15,7 +15,7 @@
 
 #define MAX_X   105.5     //7
 #define MAX_Y   105.5     //7
-#define MAX_Z   3.0     //4
+#define MAX_Z   5.0     //4
 
 using namespace visualization_msgs;
 
