@@ -18,24 +18,17 @@ Panels:
         - /Odometry1/Shape1
         - /Marker1
         - /Marker2
+        - /Marker3
         - /Image1
         - /Odometry2
         - /Odometry2/Shape1
         - /Pose1
         - /Pose2
         - /Pose3
-        - /Odometry3
-        - /Odometry3/Shape1
-        - /Odometry3/Covariance1/Position1
-        - /Odometry3/Covariance1/Orientation1
-        - /Odometry4
-        - /Odometry4/Shape1
-        - /Odometry4/Covariance1
-        - /Odometry4/Covariance1/Position1
-        - /Odometry5
-        - /Odometry5/Covariance1
-        - /Odometry6
-        - /Odometry6/Covariance1
+        - /Pose4
+        - /Pose5
+        - /Pose6
+        - /Pose7
       Splitter Ratio: 0.5050651431083679
     Tree Height: 1195
   - Class: rviz/Selection
@@ -56,7 +49,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: Image
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -87,7 +80,10 @@ Visualization Manager:
       Marker Topic: /local_planner/trajectory_markers
       Name: MarkerArray
       Namespaces:
-        {}
+        acceleration: false
+        path: false
+        pose: false
+        velocity: false
       Queue Size: 100
       Value: true
     - Class: rviz/TF
@@ -95,20 +91,10 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        base_link:
-          Value: false
-        base_link_frd:
-          Value: false
         drone_base_link:
           Value: true
         map:
           Value: true
-        map_ned:
-          Value: false
-        odom:
-          Value: false
-        odom_ned:
-          Value: false
         tracker_accel_frame:
           Value: false
         tracker_accel_optical_frame:
@@ -142,8 +128,6 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          map_ned:
-            {}
           tracker_odom_frame:
             tracker_pose_frame:
               tracker_link:
@@ -175,82 +159,12 @@ Visualization Manager:
       Visual Enabled: true
     - Class: rviz/InteractiveMarkers
       Enable Transparency: true
-      Enabled: true
+      Enabled: false
       Name: InteractiveMarkers
       Show Axes: false
       Show Descriptions: true
       Show Visual Aids: false
       Update Topic: /racer_interface/update
-      Value: true
-    - Angle Tolerance: 0.10000000149011612
-      Class: rviz/Odometry
-      Covariance:
-        Orientation:
-          Alpha: 0.5
-          Color: 255; 255; 127
-          Color Style: Unique
-          Frame: Local
-          Offset: 1
-          Scale: 1
-          Value: true
-        Position:
-          Alpha: 0.30000001192092896
-          Color: 204; 51; 204
-          Scale: 1
-          Value: true
-        Value: true
-      Enabled: true
-      Keep: 1
-      Name: Odometry
-      Position Tolerance: 0.10000000149011612
-      Shape:
-        Alpha: 1
-        Axes Length: 0.10000000149011612
-        Axes Radius: 0.009999999776482582
-        Color: 255; 25; 0
-        Head Length: 0.019999999552965164
-        Head Radius: 0.019999999552965164
-        Shaft Length: 0.019999999552965164
-        Shaft Radius: 0.019999999552965164
-        Value: Axes
-      Topic: /mavros/local_position/odom
-      Unreliable: false
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /racer_planner/waypoint_makers
-      Name: Marker
-      Namespaces:
-        {}
-      Queue Size: 100
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /mapper/ground_truth/gate_pose/markers
-      Name: Marker
-      Namespaces:
-        "": true
-      Queue Size: 100
-      Value: true
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /mapper/gate_pose/markers
-      Name: Marker
-      Namespaces:
-        "": true
-      Queue Size: 100
-      Value: true
-    - Class: rviz/Image
-      Enabled: false
-      Image Topic: /camera/image_raw
-      Max Value: 1
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: true
-      Queue Size: 2
-      Transport Hint: raw
-      Unreliable: false
       Value: false
     - Angle Tolerance: 0.10000000149011612
       Class: rviz/Odometry
@@ -269,13 +183,83 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: true
-      Enabled: true
-      Keep: 100
+      Enabled: false
+      Keep: 1
       Name: Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
         Alpha: 1
-        Axes Length: 0.05000000074505806
+        Axes Length: 0.10000000149011612
+        Axes Radius: 0.009999999776482582
+        Color: 255; 25; 0
+        Head Length: 0.019999999552965164
+        Head Radius: 0.019999999552965164
+        Shaft Length: 0.019999999552965164
+        Shaft Radius: 0.019999999552965164
+        Value: Axes
+      Topic: /mavros/local_position/odom
+      Unreliable: false
+      Value: false
+    - Class: rviz/Marker
+      Enabled: false
+      Marker Topic: /racer_planner/waypoint_makers
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /mapper/ground_truth/gate_pose/markers
+      Name: Marker
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /mapper/gate_pose/markers
+      Name: Marker
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /camera/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Keep: 1000
+      Name: Odometry
+      Position Tolerance: 0.10000000149011612
+      Shape:
+        Alpha: 1
+        Axes Length: 0.10000000149011612
         Axes Radius: 0.019999999552965164
         Color: 255; 25; 0
         Head Length: 0.30000001192092896
@@ -291,7 +275,7 @@ Visualization Manager:
       Axes Radius: 0.10000000149011612
       Class: rviz/Pose
       Color: 255; 25; 0
-      Enabled: true
+      Enabled: false
       Head Length: 0.30000001192092896
       Head Radius: 0.10000000149011612
       Name: Pose
@@ -300,7 +284,7 @@ Visualization Manager:
       Shape: Axes
       Topic: /mavros/vision_pose/pose
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Axes Length: 1
       Axes Radius: 0.10000000149011612
@@ -331,145 +315,69 @@ Visualization Manager:
       Topic: /ida/pose
       Unreliable: false
       Value: false
-    - Angle Tolerance: 0.10000000149011612
-      Class: rviz/Odometry
-      Covariance:
-        Orientation:
-          Alpha: 0.5
-          Color: 255; 255; 127
-          Color Style: Unique
-          Frame: Local
-          Offset: 1
-          Scale: 1
-          Value: false
-        Position:
-          Alpha: 0.8999999761581421
-          Color: 204; 51; 204
-          Scale: 1
-          Value: true
-        Value: true
+    - Alpha: 1
+      Axes Length: 0.5
+      Axes Radius: 0.07999999821186066
+      Class: rviz/Pose
+      Color: 255; 25; 0
       Enabled: true
-      Keep: 10
-      Name: Odometry
-      Position Tolerance: 0.10000000149011612
-      Shape:
-        Alpha: 1
-        Axes Length: 1
-        Axes Radius: 0.10000000149011612
-        Color: 255; 25; 0
-        Head Length: 0.30000001192092896
-        Head Radius: 0.10000000149011612
-        Shaft Length: 1
-        Shaft Radius: 0.05000000074505806
-        Value: Axes
-      Topic: /simple_ekf/odom_gate1
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Pose
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Axes
+      Topic: /simple_ekf/pose_gate1
       Unreliable: false
       Value: true
-    - Angle Tolerance: 0.10000000149011612
-      Class: rviz/Odometry
-      Covariance:
-        Orientation:
-          Alpha: 0.5
-          Color: 255; 255; 127
-          Color Style: Unique
-          Frame: Local
-          Offset: 1
-          Scale: 1
-          Value: false
-        Position:
-          Alpha: 0.8999999761581421
-          Color: 204; 51; 204
-          Scale: 1
-          Value: true
-        Value: true
+    - Alpha: 1
+      Axes Length: 0.5
+      Axes Radius: 0.07999999821186066
+      Class: rviz/Pose
+      Color: 255; 25; 0
       Enabled: true
-      Keep: 10
-      Name: Odometry
-      Position Tolerance: 0.10000000149011612
-      Shape:
-        Alpha: 1
-        Axes Length: 1
-        Axes Radius: 0.10000000149011612
-        Color: 255; 25; 0
-        Head Length: 0.30000001192092896
-        Head Radius: 0.10000000149011612
-        Shaft Length: 1
-        Shaft Radius: 0.05000000074505806
-        Value: Axes
-      Topic: /simple_ekf/odom_gate2
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Pose
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Axes
+      Topic: /simple_ekf/pose_gate3
       Unreliable: false
       Value: true
-    - Angle Tolerance: 0.10000000149011612
-      Class: rviz/Odometry
-      Covariance:
-        Orientation:
-          Alpha: 0.5
-          Color: 255; 255; 127
-          Color Style: Unique
-          Frame: Local
-          Offset: 1
-          Scale: 1
-          Value: false
-        Position:
-          Alpha: 0.30000001192092896
-          Color: 204; 51; 204
-          Scale: 1
-          Value: true
-        Value: true
+    - Alpha: 1
+      Axes Length: 0.5
+      Axes Radius: 0.07999999821186066
+      Class: rviz/Pose
+      Color: 255; 25; 0
       Enabled: true
-      Keep: 10
-      Name: Odometry
-      Position Tolerance: 0.10000000149011612
-      Shape:
-        Alpha: 1
-        Axes Length: 1
-        Axes Radius: 0.10000000149011612
-        Color: 255; 25; 0
-        Head Length: 0.30000001192092896
-        Head Radius: 0.10000000149011612
-        Shaft Length: 1
-        Shaft Radius: 0.05000000074505806
-        Value: Axes
-      Topic: /simple_ekf/odom_gate3
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Pose
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Axes
+      Topic: /simple_ekf/pose_gate2
       Unreliable: false
       Value: true
-    - Angle Tolerance: 0.10000000149011612
-      Class: rviz/Odometry
-      Covariance:
-        Orientation:
-          Alpha: 0.5
-          Color: 255; 255; 127
-          Color Style: Unique
-          Frame: Local
-          Offset: 1
-          Scale: 1
-          Value: false
-        Position:
-          Alpha: 0.30000001192092896
-          Color: 204; 51; 204
-          Scale: 1
-          Value: true
-        Value: true
+    - Alpha: 1
+      Axes Length: 0.5
+      Axes Radius: 0.07999999821186066
+      Class: rviz/Pose
+      Color: 255; 25; 0
       Enabled: true
-      Keep: 10
-      Name: Odometry
-      Position Tolerance: 0.10000000149011612
-      Shape:
-        Alpha: 1
-        Axes Length: 1
-        Axes Radius: 0.10000000149011612
-        Color: 255; 25; 0
-        Head Length: 0.30000001192092896
-        Head Radius: 0.10000000149011612
-        Shaft Length: 1
-        Shaft Radius: 0.05000000074505806
-        Value: Axes
-      Topic: /simple_ekf/odom_gate4
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Pose
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Axes
+      Topic: /simple_ekf/pose_gate4
       Unreliable: false
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 0; 0; 0
+    Background Color: 255; 255; 255
     Default Light: true
     Fixed Frame: map
     Frame Rate: 30
@@ -495,25 +403,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 13.581838607788086
+      Distance: 18.040559768676758
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.5940584540367126
-        Y: 1.3531184196472168
-        Z: 3.6114277839660645
+        X: -0.2570149600505829
+        Y: 0.001910417340695858
+        Z: 5.440181255340576
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6447975635528564
+      Pitch: 0.6297972202301025
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.5435847043991089
+      Yaw: 0.04544059932231903
     Saved: ~
 Window Geometry:
   Displays:
@@ -523,7 +431,7 @@ Window Geometry:
   Hide Right Dock: true
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001c00000052efc0200000018fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afc0000003d0000052e0000000000fffffffaffffffff0100000002fb0000000a0049006d006100670065020000007e000000a000000241000001c0fb000000100044006900730070006c0061007900730000000000000002b50000015600fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d006100670065000000019c000002c60000000000000000fb0000000a0049006d00610067006500000001930000028b0000000000000000fb0000000a0049006d0061006700650000000239000001fe0000000000000000fb0000000a0049006d006100670065000000021a000000b40000000000000000fb0000000a0049006d00610067006500000001a00000027e0000000000000000fb0000000a0049006d0061006700650100000219000002050000000000000000fb0000000a0049006d006100670065000000021b0000021c0000000000000000fb0000000a0049006d00610067006501000001ed0000024a0000000000000000fb0000000a0049006d00610067006502fffffff20000023e00000205000001bcfb0000000a0049006d0061006700650100000167000000f90000000000000000fb0000000a0049006d0061006700650100000266000001400000000000000000fb0000000a0049006d00610067006501000002de000000c80000000000000000fb0000000a0049006d00610067006501000001ac000002cf0000000000000000fb0000000a0049006d0061006700650100000264000001fe0000000000000000fb0000000a0049006d0061006700650100000491000000da0000000000000000fb0000000a0049006d00610067006503000000e40000049f00000247000000da000000010000014b0000052efc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fc0000003d0000052e0000000000fffffffa000000000100000002fb0000000a0049006d0061006700650000000000ffffffff0000000000000000fb0000000a0056006900650077007300000006710000010f0000010000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000780000001e3fc0100000002fb0000000800540069006d006500000002bb000004c5000002eb00fffffffb0000000800540069006d00650100000000000004500000000000000000000004df0000052e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001c00000052efc0200000018fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afc0000003d0000052e0000000000fffffffaffffffff0100000002fb0000000a0049006d006100670065030000007e000000a000000241000001c0fb000000100044006900730070006c0061007900730000000000000002b50000015600fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d006100670065000000019c000002c60000000000000000fb0000000a0049006d00610067006500000001930000028b0000000000000000fb0000000a0049006d0061006700650000000239000001fe0000000000000000fb0000000a0049006d006100670065000000021a000000b40000000000000000fb0000000a0049006d00610067006500000001a00000027e0000000000000000fb0000000a0049006d0061006700650100000219000002050000000000000000fb0000000a0049006d006100670065000000021b0000021c0000000000000000fb0000000a0049006d00610067006501000001ed0000024a0000000000000000fb0000000a0049006d00610067006502fffffff20000023e00000205000001bcfb0000000a0049006d0061006700650100000167000000f90000000000000000fb0000000a0049006d0061006700650100000266000001400000000000000000fb0000000a0049006d00610067006501000002de000000c80000000000000000fb0000000a0049006d00610067006501000001ac000002cf0000000000000000fb0000000a0049006d0061006700650100000264000001fe0000000000000000fb0000000a0049006d0061006700650100000491000000da0000000000000000fb0000000a0049006d00610067006503000000e40000049f00000247000000da000000010000014b0000052efc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fc0000003d0000052e0000000000fffffffa000000000100000002fb0000000a0049006d0061006700650000000000ffffffff0000000000000000fb0000000a0056006900650077007300000006710000010f0000010000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000780000001e3fc0100000002fb0000000800540069006d006500000002bb000004c5000002eb00fffffffb0000000800540069006d00650100000000000004500000000000000000000004df0000052e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
