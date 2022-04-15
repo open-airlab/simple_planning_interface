@@ -3,7 +3,7 @@
 
 	<node name="racer_interface_node" pkg="simple_planning_interface" type="racer_interface" output="screen" />
 	<node name="racer_mapper" pkg="racer_mapper" type="simple_mapper" output="screen" />
-	<node type="rviz" name="rviz_racer" pkg="rviz" args="-d $(find simple_planning_interface)/rviz/rviz_racer_interface.rviz" />
+	<!-- <node type="rviz" name="rviz_racer" pkg="rviz" args="-d $(find simple_planning_interface)/rviz/rviz_racer_interface.rviz" /> -->
 	<node type="rviz" name="rviz_racer2" pkg="rviz" args="-d $(find simple_planning_interface)/rviz/rviz_visualization_trajectory.rviz" />
 
 </launch>
