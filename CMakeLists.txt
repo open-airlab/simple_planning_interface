@@ -53,6 +53,15 @@ target_link_libraries(racer_interface
   ${catkin_LIBRARIES}
 )
 
+
+add_executable(inspection_mission_interface 
+  src/inspection_mission_interface.cpp
+  src/inspection_mission_interface_node.cpp
+)
+target_link_libraries(inspection_mission_interface
+  ${catkin_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############
@@ -61,6 +70,7 @@ target_link_libraries(racer_interface
 install(TARGETS
   basic_interface
   racer_interface
+  inspection_mission_interface
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

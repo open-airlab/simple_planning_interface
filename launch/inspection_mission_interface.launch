@@ -1,0 +1,7 @@
+<launch>
+	<rosparam command="load" file="$(find simple_planning_interface)/cfg/waypoints.yaml" />
+
+	<node name="inspection_mission_interface_node" pkg="simple_planning_interface" type="inspection_mission_interface" output="screen" />
+	<node type="rviz" name="rviz" pkg="rviz" args="-d $(find simple_planning_interface)/rviz/rviz_inspection_interface.rviz.rviz" />
+
+</launch>
