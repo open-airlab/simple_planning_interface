@@ -46,6 +46,8 @@ class BasicInterface
   void makeLoadButtonMarker( const Eigen::Vector3d& position );
   void makeVisualizeButtonMarker( const Eigen::Vector3d& position );
   void makeCommitButtonMarker( const Eigen::Vector3d& position );
+
+  void testInteractiveMarker();
   
  private:
   // ROS publish variable

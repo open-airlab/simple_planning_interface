@@ -7,23 +7,18 @@ nh_(nh_input)
 {
 
   // Initialize server
-server = std::make_shared<interactive_markers::InteractiveMarkerServer>(
-    "basic_interface", nh_, false
-);
+  server = std::make_shared<interactive_markers::InteractiveMarkerServer>(
+      "basic_interface_marker_server", nh_, false
+  );
+
+  // declare parameter for waypoints
+  nh_->declare_parameter<std::vector<double>>("waypoints.data", std::vector<double>{});
+
   // create ros pose publisher
   pos_publisher_ = nh_->create_publisher<geometry_msgs::msg::PoseArray>("/planner_interface/desired_waypoints", 10);
   commit_publisher_ = nh_->create_publisher<std_msgs::msg::Bool>("/planner_interface/commit", 10);
 
-  // create a timer to update the published transforms
-  // ros::Timer frame_timer = nh_.createTimer(ros::Duration(0.01), &BasicInterface::frameCallback, this);
-
-  // server.reset( new interactive_markers::InteractiveMarkerServer("basic_interface","",false) );
-
-  // ros::Duration(0.1).sleep();
-
-
-  Eigen::Vector3d position;
-
+  // Create the interface with buttons and quadcopter marker
   Eigen::Vector3d position1( 0, 0, 2.0);
   BasicInterface::makequadcopterMarker( position1 );
 
@@ -36,8 +31,39 @@ server = std::make_shared<interactive_markers::InteractiveMarkerServer>(
   Eigen::Vector3d position4( 5, 5, 0);
   BasicInterface::makeCommitButtonMarker( position4 );
 
-  server->applyChanges();
+}
 
+void BasicInterface::testInteractiveMarker()
+{
+  visualization_msgs::msg::InteractiveMarker int_marker;
+  int_marker.header.frame_id = "map";
+  int_marker.name = "test_marker";
+  int_marker.description = "Interactive Marker Example";
+  int_marker.pose.position.x = 0.0;
+  int_marker.pose.position.y = 0.0;
+  int_marker.pose.position.z = 1.0;
+
+  // Add a simple cube control
+  visualization_msgs::msg::InteractiveMarkerControl control;
+  control.always_visible = true;
+  control.interaction_mode = visualization_msgs::msg::InteractiveMarkerControl::MOVE_PLANE;
+
+  visualization_msgs::msg::Marker cube;
+  cube.type = visualization_msgs::msg::Marker::CUBE;
+  cube.scale.x = 0.45;
+  cube.scale.y = 0.45;
+  cube.scale.z = 0.45;
+  cube.color.r = 0.0;
+  cube.color.g = 1.0;
+  cube.color.b = 0.0;
+  cube.color.a = 1.0;
+
+  control.markers.push_back(cube);
+  int_marker.controls.push_back(control);
+
+  server->insert(int_marker, std::bind(&BasicInterface::buttonCommitFeedback, this, std::placeholders::_1));
+  server->applyChanges();
+  std::cout << "test marker function" << std::endl;
 }
 
 // %Tag(Box)%
@@ -96,7 +122,7 @@ void BasicInterface::buttonLoadFeedback( const visualization_msgs::msg::Interact
     geometry_msgs::msg::PoseArray published_waypoints;
 
     //load params to waypoints
-    if (nh_->get_parameter("waypoints", waypoints))
+    if (nh_->get_parameter("waypoints.data", waypoints))
       std::cout << "Loaded waypoints with size: " << waypoints.size() << std::endl;
     else
       std::cout << "Failed to load waypoints." << std::endl;  
@@ -242,6 +268,7 @@ void BasicInterface::makequadcopterMarker( const Eigen::Vector3d& position )
 
   server->insert(int_marker);
   server->setCallback(int_marker.name, std::bind(&BasicInterface::moveTargetQuadcopterFeedback, this, std::placeholders::_1));
+  server->applyChanges();
 }
 // %EndTag(quadcopter)%
 
@@ -268,6 +295,7 @@ void BasicInterface::makeLoadButtonMarker( const Eigen::Vector3d& position )
 
   server->insert(int_marker);
   server->setCallback(int_marker.name, std::bind(&BasicInterface::buttonLoadFeedback, this, std::placeholders::_1));
+  server->applyChanges();
 }
 
 // Visualize button
@@ -294,6 +322,7 @@ void BasicInterface::makeVisualizeButtonMarker( const Eigen::Vector3d& position 
 
   server->insert(int_marker);
   server->setCallback(int_marker.name, std::bind(&BasicInterface::buttonVisualizeFeedback, this, std::placeholders::_1));
+  server->applyChanges();
 }
 
 // Commit button
@@ -321,4 +350,5 @@ void BasicInterface::makeCommitButtonMarker( const Eigen::Vector3d& position )
 
   server->insert(int_marker);
   server->setCallback(int_marker.name, std::bind(&BasicInterface::buttonCommitFeedback, this, std::placeholders::_1));
+  server->applyChanges();
 }

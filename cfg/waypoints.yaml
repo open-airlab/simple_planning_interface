@@ -1,7 +1,6 @@
 basic_interface_node:
   ros__parameters:
     waypoints:
-      num_points: 21  # 16 #21
       # data: for each point: x, y, z, roll(rad), pitch(rad), yaw(rad)
       data: [0.31, 4.2, 1.95, 0.0, 0.0, -0.40, 
             2.59, 2.61, 2.02, 0.0, 0.0, -1.02,  
