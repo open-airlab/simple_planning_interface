@@ -1,7 +1,13 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.12.0)
 project(simple_planning_interface)
 
-find_package(catkin REQUIRED COMPONENTS interactive_markers roscpp visualization_msgs tf)
+# find_package(ament REQUIRED COMPONENTS interactive_markers rclcpp visualization_msgs tf2_ros)
+find_package(rclcpp REQUIRED)
+find_package(interactive_markers REQUIRED)
+find_package(visualization_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+
 find_package(Eigen3 QUIET)
 if(NOT EIGEN3_FOUND)
   # ROS == Indigo.
@@ -14,64 +20,70 @@ else()
 endif()
 
 
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-  CATKIN_DEPENDS interactive_markers roscpp visualization_msgs tf
-  DEPENDS Eigen3
-)
-
 ###########
 ## Build ##
 ###########
 
-include_directories(include
-  ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIR}
+# Include directories
+include_directories(
+  include
+  ${EIGEN3_INCLUDE_DIRS}
 )
 
-add_executable(basic_interface 
+# Source files
+set(SOURCES
   src/basic_interface.cpp
   src/basic_interface_node.cpp
 )
-target_link_libraries(basic_interface
-  ${catkin_LIBRARIES}
+
+# Create executable
+add_executable(basic_interface ${SOURCES})
+
+# Link libraries
+ament_target_dependencies(basic_interface
+  rclcpp
+  interactive_markers
+  visualization_msgs
+  tf2_ros
+  tf2_geometry_msgs
 )
 
-
-add_executable(racer_interface 
-  src/racer_interface.cpp
-  src/racer_interface_node.cpp
-)
-target_link_libraries(racer_interface
-  ${catkin_LIBRARIES}
-)
-
-
-add_executable(inspection_mission_interface 
-  src/inspection_mission_interface.cpp
-  src/inspection_mission_interface_node.cpp
-)
-target_link_libraries(inspection_mission_interface
-  ${catkin_LIBRARIES}
-)
-
-#############
+###########
 ## Install ##
-#############
+###########
 
-## Mark executables and/or libraries for installation
-install(TARGETS
-  basic_interface
-  racer_interface
-  inspection_mission_interface
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# Install headers
+install(DIRECTORY include/
+  DESTINATION include/
 )
+
+# Install executables
+install(TARGETS basic_interface
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Install launch files
+# **Install launch files**
+install(DIRECTORY launch/
+  DESTINATION share/${PROJECT_NAME}/launch
+)
+
+# Install config files
+install(DIRECTORY cfg/
+  DESTINATION share/${PROJECT_NAME}/cfg
+)
+install(DIRECTORY rviz/
+  DESTINATION share/${PROJECT_NAME}/rviz
+)
+
+# Export dependencies
+ament_export_dependencies(
+  rclcpp
+  interactive_markers
+  visualization_msgs
+  tf2_ros
+  tf2_geometry_msgs
+)
+
+# Finalize package
+ament_package()
