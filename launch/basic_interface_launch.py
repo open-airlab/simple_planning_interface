@@ -17,7 +17,7 @@ def generate_launch_description():
     # Node for your basic interface
     basic_interface_node = Node(
         package='simple_planning_interface',
-        executable='basic_interface',  # ROS2 uses "executable" instead of "type"
+        executable='basic_interface_node',  # ROS2 uses "executable" instead of "type"
         name='basic_interface_node',
         output='screen',
         parameters=[waypoints_yaml]  # Load YAML params

@@ -227,6 +227,30 @@ void BasicInterface::moveTargetQuadcopterFeedback( const visualization_msgs::msg
       pos_publisher_->publish(moving_target_waypoints);
       std::cout << "params loaded and published" << std::endl;
 
+
+      // // write a service call to send the target position to local planner using airsim_interfaces::srv::SetLocalPosition
+      // auto client = nh_->create_client<airsim_interfaces::srv::SetLocalPosition>("/airsim_node/local_position_goal");
+      // auto request = std::make_shared<airsim_interfaces::srv::SetLocalPosition::Request>();
+      // request->x = feedback->pose.position.x;
+      // request->y = feedback->pose.position.y;
+      // request->z = feedback->pose.position.z;
+      // request->yaw = euler(2); // in radian (airsim_interfaces uses radian for yaw)   
+      // while (!client->wait_for_service(std::chrono::seconds(1))) {
+      //   if (!rclcpp::ok()) {
+      //     RCLCPP_ERROR(nh_->get_logger(), "Interrupted while waiting for the service. Exiting.");
+      //     return;
+      //   }
+      //   RCLCPP_INFO(nh_->get_logger(), "service not available, waiting again...");
+      // }
+      // auto result = client->async_send_request(request);
+      // // Wait for the result.
+      // if (rclcpp::spin_until_future_complete(nh_, result) ==
+      //     rclcpp::FutureReturnCode::SUCCESS) {
+      //   RCLCPP_INFO(nh_->get_logger(), "Service call successful. Drone moving to target.");
+      // } else {
+      //   RCLCPP_ERROR(nh_->get_logger(), "Failed to call service local_position_goal");
+      // } 
+
     }
     else{
       RCLCPP_WARN(nh_->get_logger(), "Warning: Drone cannot go out of the safety cage!");
