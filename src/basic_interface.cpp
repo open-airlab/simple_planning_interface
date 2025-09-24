@@ -11,12 +11,20 @@ nh_(nh_input)
       "basic_interface_marker_server", nh_, false
   );
 
-  // declare parameter for waypoints
+  // declare parameter for waypoints and frame_id
   nh_->declare_parameter<std::vector<double>>("waypoints.data", std::vector<double>{});
+  nh_->declare_parameter<std::string>("frame_id", "map");
+
+
+  // read from params for frame_id_, otherwise default to frame_id_
+  if (!nh_->get_parameter("frame_id", frame_id_))
+    frame_id_ = "map"; 
 
   // create ros pose publisher
   pos_publisher_ = nh_->create_publisher<geometry_msgs::msg::PoseArray>("/planner_interface/desired_waypoints", 10);
   commit_publisher_ = nh_->create_publisher<std_msgs::msg::Bool>("/planner_interface/commit", 10);
+  target_pose_pub_ = nh_->create_publisher<geometry_msgs::msg::PoseStamped>("/planner_interface/target_pose", 10);
+
 
   // Create the interface with buttons and quadcopter marker
   Eigen::Vector3d position1( 0, 0, 2.0);
@@ -36,7 +44,7 @@ nh_(nh_input)
 void BasicInterface::testInteractiveMarker()
 {
   visualization_msgs::msg::InteractiveMarker int_marker;
-  int_marker.header.frame_id = "map";
+  int_marker.header.frame_id = frame_id_;
   int_marker.name = "test_marker";
   int_marker.description = "Interactive Marker Example";
   int_marker.pose.position.x = 0.0;
@@ -223,34 +231,20 @@ void BasicInterface::moveTargetQuadcopterFeedback( const visualization_msgs::msg
       pose_msgs.orientation.z = feedback->pose.orientation.z;
       pose_msgs.orientation.w = feedback->pose.orientation.w;
 
+      current_drone_marker_pose_ = pose_msgs; // update current drone marker pose
+
       moving_target_waypoints.poses.push_back(pose_msgs);
       pos_publisher_->publish(moving_target_waypoints);
       std::cout << "params loaded and published" << std::endl;
 
 
-      // // write a service call to send the target position to local planner using airsim_interfaces::srv::SetLocalPosition
-      // auto client = nh_->create_client<airsim_interfaces::srv::SetLocalPosition>("/airsim_node/local_position_goal");
-      // auto request = std::make_shared<airsim_interfaces::srv::SetLocalPosition::Request>();
-      // request->x = feedback->pose.position.x;
-      // request->y = feedback->pose.position.y;
-      // request->z = feedback->pose.position.z;
-      // request->yaw = euler(2); // in radian (airsim_interfaces uses radian for yaw)   
-      // while (!client->wait_for_service(std::chrono::seconds(1))) {
-      //   if (!rclcpp::ok()) {
-      //     RCLCPP_ERROR(nh_->get_logger(), "Interrupted while waiting for the service. Exiting.");
-      //     return;
-      //   }
-      //   RCLCPP_INFO(nh_->get_logger(), "service not available, waiting again...");
-      // }
-      // auto result = client->async_send_request(request);
-      // // Wait for the result.
-      // if (rclcpp::spin_until_future_complete(nh_, result) ==
-      //     rclcpp::FutureReturnCode::SUCCESS) {
-      //   RCLCPP_INFO(nh_->get_logger(), "Service call successful. Drone moving to target.");
-      // } else {
-      //   RCLCPP_ERROR(nh_->get_logger(), "Failed to call service local_position_goal");
-      // } 
-
+      // publish target pose for local planner to track
+      geometry_msgs::msg::PoseStamped target_pose_msg;
+      target_pose_msg.header.frame_id = frame_id_;
+      target_pose_msg.header.stamp = nh_->now();
+      target_pose_msg.pose = pose_msgs;
+      target_pose_pub_->publish(target_pose_msg);   
+      
     }
     else{
       RCLCPP_WARN(nh_->get_logger(), "Warning: Drone cannot go out of the safety cage!");
@@ -266,7 +260,7 @@ void BasicInterface::makequadcopterMarker( const Eigen::Vector3d& position )
 {
   InteractiveMarker int_marker;
   
-  int_marker.header.frame_id = "map";
+  int_marker.header.frame_id = frame_id_;
   setMarkerPosition(int_marker.pose, position);
   int_marker.scale = 1;
 
@@ -300,7 +294,7 @@ void BasicInterface::makequadcopterMarker( const Eigen::Vector3d& position )
 void BasicInterface::makeLoadButtonMarker( const Eigen::Vector3d& position )
 {
   InteractiveMarker int_marker;
-  int_marker.header.frame_id = "map";
+  int_marker.header.frame_id = frame_id_;
   setMarkerPosition(int_marker.pose, position);
   int_marker.scale = 1;
 
@@ -326,7 +320,7 @@ void BasicInterface::makeLoadButtonMarker( const Eigen::Vector3d& position )
 void BasicInterface::makeVisualizeButtonMarker( const Eigen::Vector3d& position )
 {
   InteractiveMarker int_marker;
-  int_marker.header.frame_id = "map";
+  int_marker.header.frame_id = frame_id_;
   setMarkerPosition(int_marker.pose, position);
 
   int_marker.scale = 1;
@@ -353,7 +347,7 @@ void BasicInterface::makeVisualizeButtonMarker( const Eigen::Vector3d& position 
 void BasicInterface::makeCommitButtonMarker( const Eigen::Vector3d& position )
 {
   InteractiveMarker int_marker;
-  int_marker.header.frame_id = "map";
+  int_marker.header.frame_id = frame_id_;
   // int_marker.header.stamp = ros::Time::now;
   setMarkerPosition(int_marker.pose, position);
 

@@ -14,13 +14,24 @@ def generate_launch_description():
     waypoints_yaml = os.path.join(pkg_dir, 'cfg', 'waypoints.yaml')
     rviz_config = os.path.join(pkg_dir, 'rviz', 'rviz_interface.rviz')
 
+    # frame_id launch argument
+    frame_id_arg = DeclareLaunchArgument(
+        'frame_id',
+        default_value='map',
+        description='Frame ID for the planning interface'
+    )
+    frame_id = LaunchConfiguration('frame_id')
+
     # Node for your basic interface
     basic_interface_node = Node(
         package='simple_planning_interface',
         executable='basic_interface_node',  # ROS2 uses "executable" instead of "type"
         name='basic_interface_node',
         output='screen',
-        parameters=[waypoints_yaml]  # Load YAML params
+        parameters=[
+            waypoints_yaml,
+            {'frame_id': frame_id},
+        ]
     )
 
     # Node for RViz
@@ -33,6 +44,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        frame_id_arg,
         basic_interface_node,
         rviz_node
     ])

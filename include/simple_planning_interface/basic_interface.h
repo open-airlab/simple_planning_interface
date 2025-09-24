@@ -38,8 +38,8 @@ class BasicInterface
   InteractiveMarkerControl& makeArrowControl( InteractiveMarker &msg );
 
   void buttonLoadFeedback( const visualization_msgs::msg::InteractiveMarkerFeedback::ConstSharedPtr &feedback );
-  void buttonVisualizeFeedback( const visualization_msgs::msg::InteractiveMarkerFeedback::ConstSharedPtr &feedback );
-  void buttonCommitFeedback( const visualization_msgs::msg::InteractiveMarkerFeedback::ConstSharedPtr &feedback );
+  virtual void buttonVisualizeFeedback( const visualization_msgs::msg::InteractiveMarkerFeedback::ConstSharedPtr &feedback );
+  virtual void buttonCommitFeedback( const visualization_msgs::msg::InteractiveMarkerFeedback::ConstSharedPtr &feedback );
   void moveTargetQuadcopterFeedback( const visualization_msgs::msg::InteractiveMarkerFeedback::ConstSharedPtr &feedback );
 
   void makequadcopterMarker( const Eigen::Vector3d& position );
@@ -48,12 +48,23 @@ class BasicInterface
   void makeCommitButtonMarker( const Eigen::Vector3d& position );
 
   void testInteractiveMarker();
+
+  std::string frame_id_;
+
+ protected:
+
+  std::shared_ptr<rclcpp::Node> nh_;
+
+  geometry_msgs::msg::Pose current_drone_marker_pose_;
+  
   
  private:
   // ROS publish variable
-  std::shared_ptr<rclcpp::Node> nh_;
+
   rclcpp::Publisher<geometry_msgs::msg::PoseArray>::SharedPtr pos_publisher_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr commit_publisher_;
+
+  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr target_pose_pub_;
 
   void setMarkerPosition(geometry_msgs::msg::Pose& pose, const Eigen::Vector3d& position)
   {
